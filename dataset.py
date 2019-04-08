@@ -12,12 +12,13 @@ import random
 
 new_h = 576
 new_w = 800
-# img_transformation = transforms.Compose([
-#     # transforms.Resize(size),
-#     # transforms.CenterCrop(size),
-#     transforms.ToTensor(),
-#     # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-# ])
+size = 224
+image_transform = transforms.Compose([
+     transforms.Resize(size),
+     transforms.CenterCrop(size),
+     transforms.ToTensor(),
+     # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+ ])
 
 # label_transformation = transforms.Compose([
 #     transforms.ToTensor()
@@ -48,7 +49,12 @@ class SegDataset(Dataset):
         #     target[c][lbl_tensor == c] = 1
 
         # return img_tensor, target.long()
-    
+
+    def transform(self, img, lbl):
+        new_img = image_transform(img)
+        new_lbl = image_transform(lbl)
+        return new_img, new_lbl
+    '''
     def transform(self, img, lbl):
         if self.crop:
             h, w, _ = img.shape
@@ -64,3 +70,4 @@ class SegDataset(Dataset):
         img = torch.from_numpy(img).float()
         lbl = torch.from_numpy(lbl).long()
         return img, lbl
+    '''
