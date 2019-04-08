@@ -104,7 +104,7 @@ def fine_tune(model, name):
 
 
 def train(model, name, criterion, optimizer, scheduler, train_loader, val_loader, epochs):
-    iif gpu_id >= 0:
+    if gpu_id >= 0:
         model = model.cuda()
 
     for epoch in range(epochs):
