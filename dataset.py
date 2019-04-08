@@ -40,6 +40,8 @@ class SegDataset(Dataset):
         name = self.all_names[idx]
         image = Image.open(os.path.join(self.image_dir, name)).convert('RGB')
         label = Image.open(os.path.join(self.label_dir, name)).convert('RGB')
+        print(image.shape)
+        print(label.shape)
 
         #img_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
         img_tensor, lbl_tensor = self.transform(image, label)
