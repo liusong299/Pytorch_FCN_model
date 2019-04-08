@@ -39,7 +39,7 @@ class SegDataset(Dataset):
         image = Image.open(os.path.join(self.image_dir, name)).convert('RGB')
         label = Image.open(os.path.join(self.label_dir, name)).convert('RGB')
 
-        i#mg_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
+        #img_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
         img_tensor, lbl_tensor = self.transform(image, label)
         return img_tensor, lbl_tensor
 
