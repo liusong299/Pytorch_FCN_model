@@ -219,8 +219,9 @@ def make_layers(cfg, batch_norm=False):
 
 
 if __name__ == "__main__":
-    batch_size, n_class, h, w = 10, 20, 160, 160
-
+    #batch_size, n_class, h, w = 10, 20, 160, 160
+    batch_size, n_class, h, w = 100, 20, 224, 224
+    #Stephen debug, hard coding here
     # test output size
     vgg_model = VGGNet(requires_grad=True)
     input = torch.autograd.Variable(torch.randn(batch_size, 3, 224, 224))

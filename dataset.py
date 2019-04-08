@@ -10,8 +10,10 @@ import random
 
 #from utils import n_class
 
-new_h = 576
-new_w = 800
+#new_h = 576
+#new_w = 800
+new_h = 224
+new_w = 224
 size = 224
 image_transform = transforms.Compose([
      transforms.Resize(size),
