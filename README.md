@@ -1,7 +1,5 @@
-# sem-mask-nn
-Neural network that generate semantic mask
+# Pytorch_FCN_model
 
-Project 1 for CV course
+COMP5421 Computer Vision: Project 2
+Semantic Segmentation
 
-
-# March 23rd  have not trained yet  , the loss functions and pic sizes are not that right 

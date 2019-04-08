@@ -104,7 +104,7 @@ def fine_tune(model, name):
 
 
 def train(model, name, criterion, optimizer, scheduler, train_loader, val_loader, epochs):
-    if vals['use_gpu']:
+    iif gpu_id >= 0:
         model = model.cuda()
 
     for epoch in range(epochs):
@@ -118,7 +118,7 @@ def train(model, name, criterion, optimizer, scheduler, train_loader, val_loader
             raw_inputs, raw_labels = batch[0], batch[1]
 
             # inputs, labels = None, None
-            if vals['use_gpu']:
+            if gpu_id >= 0:
                 inputs = Variable(raw_inputs.cuda())
                 labels = Variable(raw_labels.cuda())
             else:
@@ -236,7 +236,6 @@ print("MODEL_DIR=", MODEL_DIR)
 print("DATA_DIR=", DATA_DIR)
 
 if gpu_id >= 0 and torch.cuda.is_available():
-    #vals['use_gpu'] = 1
     logging.info('Use GPU. device: {}'.format(gpu_id))
     torch.cuda.set_device(gpu_id)
 
