@@ -73,6 +73,7 @@ def cross_entropy2d(input, target, weight=None, size_average=True):
     # log_p: (n*h*w, c)
     log_p = log_p.transpose(1, 2).transpose(2, 3).contiguous()
     log_p = log_p[target.view(n, h, w, 1).repeat(1, 1, 1, c) >= 0]
+#    log_p = log_p[target.view(n, h, w, 1).repeat(1, 1, 1, c) >= 0]
     log_p = log_p.view(-1, c)
     # target: (n*h*w,)
     mask = target >= 0
@@ -141,6 +142,7 @@ def train(model, name, criterion, optimizer, scheduler, train_loader, val_loader
 
         logging.info("Finish epoch: {}, time: {}, avg_loss: {:0.5f}"
                      .format(epoch, gap_time(since), np.mean(epoch_losses)))
+        #print("name:", name)
         torch.save(model, get_model_path(name, epoch))
 
         val(model, val_loader, epoch)
@@ -172,7 +174,8 @@ def val(model, val_loader, epoch):
     # Calculate average IoU
     total_ious = np.array(total_ious).T  # n_class * val_len
     ious = np.nanmean(total_ious, axis=1)
-    pixel_accs = np.array(pixel_accs).mean()
+    #print("###DEBUG### pixel_accs:", pixel_accs)
+    pixel_accs = np.mean(np.array(pixel_accs))
     logging.info("epoch: {}, pix_acc: {}, meanIoU: {}, IoUs: {}".format(epoch, pixel_accs, np.nanmean(ious), ious))
 
     # IU_scores[epoch] = ious
@@ -200,7 +203,7 @@ def iou(pred, target):
 def pixel_acc(pred, target):
     correct = (pred == target).sum()
     total = (target == target).sum()
-
+    return (correct + 0.0) / total
 
 
 rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
@@ -241,8 +244,8 @@ if gpu_id >= 0 and torch.cuda.is_available():
     logging.info('Use GPU. device: {}'.format(gpu_id))
     torch.cuda.set_device(gpu_id)
 
-model = models.all_models[model](n_class)
-fine_tune(model, model)
+fcn_model = models.all_models[model](n_class)
+fine_tune(fcn_model, model)
 
 # TODO calculate mean of BGR
 means = np.array([104.00698793, 116.66876762, 122.67891434])

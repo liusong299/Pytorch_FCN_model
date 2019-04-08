@@ -38,13 +38,11 @@ class SegDataset(Dataset):
 
     def __getitem__(self, idx):
         name = self.all_names[idx]
-        image = Image.open(os.path.join(self.image_dir, name)).convert('RGB')
-        label = Image.open(os.path.join(self.label_dir, name)).convert('RGB')
-        print(image.shape)
-        print(label.shape)
+        image = Image.open(os.path.join(self.image_dir, name))
+        label = Image.open(os.path.join(self.label_dir, name))
 
-        #img_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
-        img_tensor, lbl_tensor = self.transform(image, label)
+        img_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
+#        img_tensor, lbl_tensor = self.transform(image, label)
         return img_tensor, lbl_tensor
 
         # create one-hot encoding
@@ -55,11 +53,11 @@ class SegDataset(Dataset):
 
         # return img_tensor, target.long()
 
-    def transform(self, img, lbl):
-        new_img = image_transform(img)
-        new_lbl = image_transform(lbl)
-        return new_img, new_lbl
-    '''
+#    def transform(self, img, lbl):
+#        new_img = image_transform(img)
+#        new_lbl = image_transform(lbl)
+#        return new_img, new_lbl
+#    '''
     def transform(self, img, lbl):
         if self.crop:
             h, w, _ = img.shape
@@ -75,4 +73,4 @@ class SegDataset(Dataset):
         img = torch.from_numpy(img).float()
         lbl = torch.from_numpy(lbl).long()
         return img, lbl
-    '''
+#    '''
