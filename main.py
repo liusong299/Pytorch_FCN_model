@@ -32,6 +32,8 @@ from nets import models
 
 # utils functions
 #=======================================================================
+now = lambda: time.time()
+gap_time = lambda past_time : int((now() - past_time) * 1000)
 
 
 def mkdir(newdir):
@@ -111,7 +113,7 @@ def train(model, name, criterion, optimizer, scheduler, train_loader, val_loader
         scheduler.step()
 
         epoch_losses = []
-        since = now()
+        since = time.time()
         for iter, batch in enumerate(train_loader):
             optimizer.zero_grad()
 
@@ -245,10 +247,6 @@ fine_tune(model, model)
 # TODO calculate mean of BGR
 means = np.array([104.00698793, 116.66876762, 122.67891434])
 
-
-
-now = lambda: time.time()
-gap_time = lambda past_time : int((now() - past_time) * 1000)
 
 
 
