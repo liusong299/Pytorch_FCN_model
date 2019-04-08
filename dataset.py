@@ -12,9 +12,9 @@ import random
 
 #new_h = 576
 #new_w = 800
-new_h = 224
-new_w = 224
-size = 224
+new_h = 160
+new_w = 160
+size = 160
 image_transform = transforms.Compose([
      transforms.Resize(size),
      transforms.CenterCrop(size),
