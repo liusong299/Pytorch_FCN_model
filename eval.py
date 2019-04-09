@@ -7,10 +7,11 @@ import resource
 import click
 import numpy as np
 import time
+import sys,os
 from os.path import abspath, dirname, isdir, isfile, join
 import copy
 import pickle
-
+import cv2
 #Pytorch Imports
 #=======================================================================
 import torch
@@ -23,19 +24,21 @@ from torchvision import datasets
 from tqdm import tqdm
 from distutils.version import LooseVersion
 import torch.nn.functional as F
-import cv2
 #Self Imports
 #=======================================================================
 #from utils import *
 #from train import *
 from dataset import SegDataset
 from nets import models
-
+from dataset import get_test_img
 # utils functions
 #=======================================================================
 now = lambda: time.time()
 gap_time = lambda past_time : int((now() - past_time) * 1000)
 
+def get_pred_name(infer, name):
+    mkdir('{}/{}'.format(PRED_DIR, infer))
+    return '{}/{}/{}'.format(PRED_DIR, infer, name)
 
 def mkdir(newdir):
     if type(newdir) is not str:
@@ -216,10 +219,13 @@ logging.basicConfig(
 )
 
 
+
+
+#Evalulation of test images
 import configparser
 import sys,os
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('config1.ini')
 print(config.sections())
 n_class    = config.getint(  'Default', 'n_class')
 batch_size = config.getint(  'Default', 'batch_size')
@@ -232,24 +238,42 @@ gamma      = config.getfloat('Default', 'gamma')
 model      = config.get(     'Default', 'model')
 gpu_id     = config.getint(  'Default', 'gpu_id')
 print(config.items('Default'))
+
 # dir path
 ROOT_DIR = dirname(abspath(__file__))
-MODEL_DIR = '{}/saved_model'.format(ROOT_DIR)
+MODEL_DIR = '{}/saved_model_1'.format(ROOT_DIR)
 DATA_DIR = '{}/data'.format(ROOT_DIR)
+PRED_DIR = '{}/pred'.format(ROOT_DIR)
 
 print("ROOT_DIR=", ROOT_DIR)
 print("MODEL_DIR=", MODEL_DIR)
 print("DATA_DIR=", DATA_DIR)
 
-if gpu_id >= 0 and torch.cuda.is_available():
-    logging.info('Use GPU. device: {}'.format(gpu_id))
-    torch.cuda.set_device(gpu_id)
+model_path="/home/songliu/FCN/saved_model_1/fcn16/20"
+gpu_id = [6,7]
+model = torch.load(model_path)
+eval_model = nn.DataParallel(model, device_ids=gpu_id)
+eval_model = eval_model.cuda()
+test_name ='test'
+test_dir = '{}/{}/images'.format(DATA_DIR, test_name)
+img_names = [ f for f in os.listdir(test_dir)]
 
-fcn_model = models.all_models[model](n_class)
-fine_tune(fcn_model, model)
+for name in img_names:
+   print('test image: {}'.format(name))
+   image, old_h, old_w = get_test_img(test_dir, name)
+   image = image.cuda() 
+   output = model(image)
+   output = output.data.cpu().numpy()
 
-# TODO calculate mean of BGR
-means = np.array([104.00698793, 116.66876762, 122.67891434])
+   N, _, h, w = output.shape
+   pred = output.transpose(0, 2, 3, 1).reshape(-1, n_class).argmax(axis=1).reshape(N, h, w)
+   pred = pred.transpose(1, 2, 0)
+   pred = pred[:old_h,:old_w,:]
+   pred = pred * 40
+   print('image size: {}; pred size: {}'.format((old_h, old_w), pred.shape))
+
+   cv2.imwrite(get_pred_name(test_name, name), pred)
+
 
 
 
