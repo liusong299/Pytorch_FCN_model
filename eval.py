@@ -29,8 +29,8 @@ import torch.nn.functional as F
 #from utils import *
 #from train import *
 from dataset import SegDataset
-from nets import models
 from dataset import get_test_img
+from nets import models
 # utils functions
 #=======================================================================
 now = lambda: time.time()
@@ -239,11 +239,20 @@ model      = config.get(     'Default', 'model')
 gpu_id     = config.getint(  'Default', 'gpu_id')
 print(config.items('Default'))
 
+
+from fcn import *
+
+logging.info("Get pretrained VGG ......")
+vgg_model = VGGNet(requires_grad=True)
+
+fcn_model = FCN16s(pretrained_net=vgg_model, n_class=n_class)
 # dir path
 ROOT_DIR = dirname(abspath(__file__))
 MODEL_DIR = '{}/saved_model_1'.format(ROOT_DIR)
 DATA_DIR = '{}/data'.format(ROOT_DIR)
 PRED_DIR = '{}/pred'.format(ROOT_DIR)
+
+
 
 print("ROOT_DIR=", ROOT_DIR)
 print("MODEL_DIR=", MODEL_DIR)
@@ -257,6 +266,7 @@ eval_model = eval_model.cuda()
 test_name ='test'
 test_dir = '{}/{}/images'.format(DATA_DIR, test_name)
 img_names = [ f for f in os.listdir(test_dir)]
+
 
 for name in img_names:
    print('test image: {}'.format(name))
