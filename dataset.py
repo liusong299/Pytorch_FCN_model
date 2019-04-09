@@ -12,17 +12,19 @@ import random
 
 new_h = 576
 new_w = 800
-#size = 224
+size = 224
 #new_h = size
 #new_w = size
 #image_transform = transforms.Compose([
-#     transforms.Resize(size),
-#     transforms.CenterCrop(size),
+#     transforms.Resize((new_h, new_w)),
+#     transforms.FiveCrop(size),
 #     transforms.ToTensor(),
-     # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 # ])
 
-# label_transformation = transforms.Compose([
+#label_transform = transforms.Compose([
+#     transforms.Resize((new_h, new_w)),
+#     transforms.FiveCrop(size),
 #     transforms.ToTensor()
 # ])
 
@@ -42,7 +44,7 @@ class SegDataset(Dataset):
         label = Image.open(os.path.join(self.label_dir, name))
 
         img_tensor, lbl_tensor = self.transform(np.array(image, dtype=np.uint8), np.array(label, dtype=np.int32))
-#        img_tensor, lbl_tensor = self.transform(image, label)
+        #img_tensor, lbl_tensor = self.transform(image, label)
         return img_tensor, lbl_tensor
 
         # create one-hot encoding
@@ -53,11 +55,13 @@ class SegDataset(Dataset):
 
         # return img_tensor, target.long()
 
-#    def transform(self, img, lbl):
-#        new_img = image_transform(img)
-#        new_lbl = image_transform(lbl)
-#        return new_img, new_lbl
-#    '''
+    #def transform(self, img, lbl):
+    #    new_img = image_transform(img)
+    #    new_lbl = label_transform(lbl)
+    #    new_lbl = np.array(new_lbl, dtype=np.int32)
+    #    newZ_lbl = torch.from_numpy(new_lbl).long()
+    #    return new_img, new_lbl
+    
     def transform(self, img, lbl):
         if self.crop:
             h, w, _ = img.shape
@@ -73,4 +77,4 @@ class SegDataset(Dataset):
         img = torch.from_numpy(img).float()
         lbl = torch.from_numpy(lbl).long()
         return img, lbl
-#    '''
+   
