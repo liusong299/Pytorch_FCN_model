@@ -10,17 +10,17 @@ import random
 
 #from utils import n_class
 
-#new_h = 576
-#new_w = 800
-new_h = 160
-new_w = 160
-size = 160
-image_transform = transforms.Compose([
-     transforms.Resize(size),
-     transforms.CenterCrop(size),
-     transforms.ToTensor(),
+new_h = 576
+new_w = 800
+#size = 224
+#new_h = size
+#new_w = size
+#image_transform = transforms.Compose([
+#     transforms.Resize(size),
+#     transforms.CenterCrop(size),
+#     transforms.ToTensor(),
      # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
- ])
+# ])
 
 # label_transformation = transforms.Compose([
 #     transforms.ToTensor()
